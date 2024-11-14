@@ -1,27 +1,32 @@
 import styles from "./toDoList.module.scss";
 import {AiOutlineDelete} from "react-icons/ai";
 import {FiEdit} from "react-icons/fi";
-{
-	/* <FiEdit id="editCard" /> */
-}
 import {useRef} from "react";
 import {useState} from "react";
 
-let body = document.getElementById("body");
 let ToDoList = () => {
+	let bodyRef = useRef(null);
 	let addRef = useRef(null);
-	let localData = localStorage.getItem("txts")
-		? JSON.parse(localStorage.getItem("txts"))
-		: [];
+	let [localData, setLocalData] = useState(
+		localStorage.getItem("txts") ? JSON.parse(localStorage.getItem("txts")) : []
+	);
 	let addLocalFunc = () => {
 		let addCardInput = addRef.current.value;
-		localData.push(addCardInput);
-		localStorage.setItem("txts", JSON.stringify(localData));
+		let newLocalData = [...localData, addCardInput];
+		setLocalData(newLocalData);
+		localStorage.setItem("txts", JSON.stringify(newLocalData));
 		addRef.current.value = "";
-		console.log(localData);
-		if (localData) {
-			// addRefFunc(addCardInput);
-		}
+	};
+	let deleteLocalFunc = (idx) => {
+		let childBody = Array.from(bodyRef.current.children);
+		let newElement = childBody.forEach((value) => {
+			if (value.id == idx) {
+				let deleteData = JSON.parse(localStorage.getItem("txts"));
+				deleteData.splice(value.id, 1);
+				setLocalData(deleteData);
+				localStorage.setItem("txts", JSON.stringify(deleteData));
+			}
+		});
 	};
 
 	return (
@@ -36,16 +41,20 @@ let ToDoList = () => {
 					</button>
 				</div>
 			</div>
-			<div id="body" className={styles.body}>
-				{localData.map((item, id) => {
-					<div className={styles.card}>
+			<div id="body" ref={bodyRef} className={styles.body}>
+				{localData.map((item, id) => (
+					<div id={id} key={id} className={styles.card}>
 						<input type="checkbox" />
 						<div>
 							<p>{item}</p>
 						</div>
-						<AiOutlineDelete id={id} className={styles.deleteCard} />
-					</div>;
-				})}
+						<AiOutlineDelete
+							onClick={() => deleteLocalFunc(id)}
+							id={id}
+							className={styles.deleteCard}
+						/>
+					</div>
+				))}
 			</div>
 		</section>
 	);

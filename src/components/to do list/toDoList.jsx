@@ -3,6 +3,7 @@ import {AiOutlineDelete} from "react-icons/ai";
 import {FiEdit} from "react-icons/fi";
 import {useRef} from "react";
 import {useState, useEffect} from "react";
+import axios from "axios";
 
 let ToDoList = () => {
 	let bodyRef = useRef(null);
@@ -12,24 +13,7 @@ let ToDoList = () => {
 		localStorage.getItem("txts") ? JSON.parse(localStorage.getItem("txts")) : []
 	);
 
-	let searchFunc = () => {
-		if (searchRef.current) {
-			let str = searchRef.current.value;
-			let newLocalData = localData.filter((value) =>
-				value.includes(String(str))
-			);
-			console.log(newLocalData);
-			if (newLocalData.length > 0) {
-				setLocalData(newLocalData);
-			} else {
-				setLocalData(JSON.parse(localStorage.getItem("txts")));
-			}
-		}
-	};
-
-	useEffect(() => {
-		searchFunc();
-	}, [searchRef.current ? searchRef.current.value : ""]);
+	let searchFunc = () => {};
 
 	let addLocalFunc = () => {
 		let addCardInput = addRef.current.value;
@@ -56,7 +40,7 @@ let ToDoList = () => {
 				<h1>To Do List</h1>
 				<input
 					ref={searchRef}
-					id="searchCard"
+					id="searchInput"
 					placeholder="Search"
 					type="text"
 					onChange={searchFunc}
